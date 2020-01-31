@@ -4,25 +4,30 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+
 	<key>CFBundleDisplayName</key>
 	<string>dosbox-staging</string>
+
 	<key>CFBundleExecutable</key>
 	<string>dosbox</string>
-<!--
+
 	<key>CFBundleIconFile</key>
 	<string>dosbox-staging.icns</string>
+<!--
 	<key>CFBundleIdentifier</key>
 	<string>io.github.dosbox-staging</string>
 -->
  	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+
 	<key>CFBundleName</key>
 	<string>dosbox-staging</string>
+
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 
 	<key>CFBundleShortVersionString</key>
-	<string>v0.75.0-pre-g0000</string>
+	<string>v0.75.0-pre-500-g0000</string>
 
 	<key>CFBundleVersion</key>
 	<string>0.75.0.pre</string>
@@ -32,8 +37,10 @@
 
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+
 	<key>CGDisableCoalescedUpdates</key>
 	<true/>
+
 	<key>LSMinimumSystemVersionByArchitecture</key>
 	<dict>
 	<key>x86_64</key>
