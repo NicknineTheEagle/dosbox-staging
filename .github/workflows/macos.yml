@@ -29,3 +29,46 @@ jobs:
         env:
           MAX_WARNINGS: ${{ matrix.conf.max_warnings }}
         run:  python3 ./scripts/count-warnings.py build.log
+
+  build_macos_release:
+    name: Release build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install C++ compiler and libraries
+        run:  brew install $(./scripts/list-build-dependencies.sh -m brew ${{ matrix.conf.flags}})
+      - name: Log environment
+        run:  ./scripts/log-env.sh
+      - name: Inject version string
+        run: |
+          set -x
+          export VERSION=$(git describe --abbrev=4)
+          sed -i "s/AC_INIT(dosbox,git)/AC_INIT(dosbox,$VERSION)/" configure.ac
+          echo ::set-env name=VERSION::$VERSION
+      - name: Build
+        env:
+          FLAGS: -O3 -DNDEBUG -pipe
+        run: |
+          set -x
+          ./autogen.sh
+          ./configure CFLAGS="$FLAGS" CXXFLAGS="$FLAGS"
+          gmake -j "$(sysctl -n hw.physicalcpu)"
+      - name: Package
+        run: |
+          set -x
+          # Prepare content
+          install -d dosbox-staging.app/Contents/MacOS/
+          install -d dosbox-staging.app/Contents/Resources/
+          install -d dosbox-staging.app/Contents/SharedSupport/
+          # install -d dosbox-staging.app/Contents/_CodeSignature/ # ?
+
+          install src/dosbox           dosbox-staging.app/Contents/MacOS/dosbox
+          install docs/README.template dosbox-staging.app/SharedSupport/README
+          install COPYING              dosbox-staging.app/SharedSupport/COPYING
+          install README               dosbox-staging.app/SharedSupport/manual.txt
+          install docs/README.video    dosbox-staging.app/SharedSupport/video.txt
+
+          hdiutil create \
+              -volname "dosbox-staging" \
+              -srcfolder dosbox-staging.app \
+              -ov -format UDZO dosbox-staging.dmg
