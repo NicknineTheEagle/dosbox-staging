@@ -49,6 +49,9 @@ jobs:
         run: |
           set -x
           ls -n /Applications/ | grep Xcode*
+          xcode-select --print-path
+          sudo xcode-select --switch /Applications/Xcode_11.app/Contents/Developer
+          xcode-select --print-path
       - name: Build
         env:
           FLAGS: -O3 -DNDEBUG -pipe
