@@ -27,6 +27,11 @@ install -d "$dst/SharedSupport/"
 
 # install -d dosbox-staging.app/Contents/_CodeSignature/ # ?
 
+install_name_tool -change "$opt/libpng/lib/libpng16.16.dylib"         @rpath/libpng16.16.dylib src/dosbox
+install_name_tool -change "$opt/opusfile/lib/libopusfile.0.dylib"     @rpath/libopusfile.0.dylib src/dosbox 
+install_name_tool -change "$opt/sdl2/lib/libSDL2-2.0.0.dylib"         @rpath/libSDL2-2.0.0.dylib src/dosbox 
+install_name_tool -change "$opt/sdl2_net/lib/libSDL2_net-2.0.0.dylib" @rpath/libSDL2_net-2.0.0.dylib src/dosbox 
+
 install        "src/dosbox"                                "$dst/MacOS/"
 install        "$opt/libpng/lib/libpng16.16.dylib"         "$dst/MacOS/"
 install        "$opt/opusfile/lib/libopusfile.0.dylib"     "$dst/MacOS/"
@@ -45,4 +50,4 @@ ln -s /Applications dist/
 hdiutil create \
     -volname "dosbox-staging" \
     -srcfolder dist \
-    -ov -format UDZO "dosbox-staging $(git describe).dmg"
+    -ov -format UDZO "dosbox-staging $(git describe --abbrev=5).dmg"
