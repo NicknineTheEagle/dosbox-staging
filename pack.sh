@@ -17,25 +17,32 @@ cp              dosbox-staging-1024.png       dosbox-staging.iconset/icon_512x51
 iconutil -c icns dosbox-staging.iconset
 popd
 
+opt=/usr/local/opt
+dst=dist/dosbox-staging.app/Contents/
+
 # Prepare content
-install -d dist/dosbox-staging.app/Contents/MacOS/
-install -d dist/dosbox-staging.app/Contents/Resources/
-install -d dist/dosbox-staging.app/Contents/SharedSupport/
+install -d "$dst/MacOS/"
+install -d "$dst/Resources/"
+install -d "$dst/SharedSupport/"
 
 # install -d dosbox-staging.app/Contents/_CodeSignature/ # ?
 
-install        src/dosbox                        dist/dosbox-staging.app/Contents/MacOS/dosbox
-install -m 644 contrib/macos/Info.plist          dist/dosbox-staging.app/Contents/Info.plist
-install -m 644 contrib/macos/PkgInfo             dist/dosbox-staging.app/Contents/PkgInfo
-install -m 644 contrib/icons/dosbox-staging.icns dist/dosbox-staging.app/Contents/Resources/dosbox-staging.icns
-install -m 644 docs/README.template              dist/dosbox-staging.app/Contents/SharedSupport/README
-install -m 644 COPYING                           dist/dosbox-staging.app/Contents/SharedSupport/COPYING
-install -m 644 README                            dist/dosbox-staging.app/Contents/SharedSupport/manual.txt
-install -m 644 docs/README.video                 dist/dosbox-staging.app/Contents/SharedSupport/video.txt
+install        "src/dosbox"                                "$dst/MacOS/"
+install        "$opt/libpng/lib/libpng16.16.dylib"         "$dst/MacOS/"
+install        "$opt/opusfile/lib/libopusfile.0.dylib"     "$dst/MacOS/"
+install        "$opt/sdl2/lib/libSDL2-2.0.0.dylib"         "$dst/MacOS/"
+install        "$opt/sdl2_net/lib/libSDL2_net-2.0.0.dylib" "$dst/MacOS/"
+install -m 644 "contrib/macos/Info.plist"                  "$dst/Info.plist"
+install -m 644 "contrib/macos/PkgInfo"                     "$dst/PkgInfo"
+install -m 644 "contrib/icons/dosbox-staging.icns"         "$dst/Resources/"
+install -m 644 "docs/README.template"                      "$dst/SharedSupport/README"
+install -m 644 "COPYING"                                   "$dst/SharedSupport/COPYING"
+install -m 644 "README"                                    "$dst/SharedSupport/manual.txt"
+install -m 644 "docs/README.video"                         "$dst/SharedSupport/video.txt"
 
 ln -s /Applications dist/
 
 hdiutil create \
     -volname "dosbox-staging" \
     -srcfolder dist \
-    -ov -format UDZO "dosbox-staging v0.75.0-500-g0000.dmg"
+    -ov -format UDZO "dosbox-staging $(git describe).dmg"
