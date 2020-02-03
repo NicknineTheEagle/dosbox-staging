@@ -70,6 +70,9 @@ jobs:
         run: |
           set -x
 
+          # Generate icon
+          make -C contrib/icons/ dosbox-staging.icns
+
           opt=/usr/local/opt
           dst=dist/dosbox-staging.app/Contents/
 
