@@ -6,6 +6,7 @@ set -x
 
 opt=/usr/local/opt
 dst=dist/dosbox-staging.app/Contents/
+version=$(git describe --abbrev=5)
 
 # Prepare content
 install -d "$dst/MacOS/"
@@ -14,21 +15,12 @@ install -d "$dst/SharedSupport/"
 
 # install -d dosbox-staging.app/Contents/_CodeSignature/ # ?
 
-overwrite_load_path () {
-	local -r lib_in=$1
-	local -r bin_file=$2
-	install_name_tool \
-		-change "$lib_in" \
-		@executable_path/$(basename "$lib_in") \
-		"$bin_file"
-}
-
 install        "src/dosbox"                                "$dst/MacOS/"
 # install        "$opt/libpng/lib/libpng16.16.dylib"         "$dst/MacOS/"
 # install        "$opt/opusfile/lib/libopusfile.0.dylib"     "$dst/MacOS/"
-install        "$opt/sdl2/lib/libSDL2-2.0.0.dylib"         "$dst/MacOS/"
+# install        "$opt/sdl2/lib/libSDL2-2.0.0.dylib"         "$dst/MacOS/"
 # install        "$opt/sdl2_net/lib/libSDL2_net-2.0.0.dylib" "$dst/MacOS/"
-install -m 644 "contrib/macos/Info.plist"                  "$dst/Info.plist"
+install -m 644 "contrib/macos/Info.plist.template"           "$dst/Info.plist"
 install -m 644 "contrib/macos/PkgInfo"                     "$dst/PkgInfo"
 install -m 644 "contrib/icons/dosbox-staging.icns"         "$dst/Resources/"
 install -m 644 "docs/README.template"                      "$dst/SharedSupport/README"
@@ -36,20 +28,15 @@ install -m 644 "COPYING"                                   "$dst/SharedSupport/C
 install -m 644 "README"                                    "$dst/SharedSupport/manual.txt"
 install -m 644 "docs/README.video"                         "$dst/SharedSupport/video.txt"
 
-# pushd "$dst/MacOS"
-# overwrite_load_path "$opt/libpng/lib/libpng16.16.dylib"         dosbox
-# overwrite_load_path "$opt/opusfile/lib/libopusfile.0.dylib"     dosbox 
-# overwrite_load_path "$opt/sdl2/lib/libSDL2-2.0.0.dylib"         dosbox 
-# overwrite_load_path "$opt/sdl2_net/lib/libSDL2_net-2.0.0.dylib" dosbox 
-# overwrite_load_path "$opt/libpng/lib/libpng16.16.dylib"         libpng16.16.dylib
-# overwrite_load_path "$opt/sdl2/lib/libSDL2-2.0.0.dylib"         libSDL2-2.0.0.dylib
-# overwrite_load_path "$opt/sdl2_net/lib/libSDL2_net-2.0.0.dylib" libSDL2_net-2.0.0.dylib
-# overwrite_load_path "$opt/sdl2/lib/libSDL2-2.0.0.dylib"         libSDL2_net-2.0.0.dylib
-# popd
+# Fill README template file
+sed -i -e "s|%VERSION%|$version|"                     "$dst/Info.plist"
+sed -i -e "s|%GIT_COMMIT%|$GITHUB_SHA|"               "$dst/SharedSupport/README"
+sed -i -e "s|%GIT_BRANCH%|${GITHUB_REF#refs/heads/}|" "$dst/SharedSupport/README"
+sed -i -e "s|%GITHUB_REPO%|$GITHUB_REPOSITORY|"       "$dst/SharedSupport/README"
 
 ln -s /Applications dist/
 
 hdiutil create \
     -volname "dosbox-staging" \
     -srcfolder dist \
-    -ov -format UDZO "dosbox-staging $(git describe --abbrev=5).dmg"
+    -ov -format UDZO "dosbox-staging $version.dmg"
