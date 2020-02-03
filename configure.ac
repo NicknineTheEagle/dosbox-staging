@@ -448,7 +448,9 @@ fi
 
 AH_TEMPLATE(C_MODEM,[Define to 1 to enable internal modem support, requires SDL2_net])
 AH_TEMPLATE(C_IPX,[Define to 1 to enable IPX over Internet networking, requires SDL2_net])
-AC_CHECK_HEADER(SDL_net.h,have_sdl_net_h=yes,)
+
+# FIXME temporarily disable SDL_net
+# AC_CHECK_HEADER(SDL_net.h,have_sdl_net_h=yes,)
 
 AC_CHECK_LIB(SDL2_net, SDLNet_Init, have_sdl_net_lib=yes, , )
 if test x$have_sdl_net_lib = xyes -a x$have_sdl_net_h = xyes ; then
