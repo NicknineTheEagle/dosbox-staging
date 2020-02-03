@@ -34,7 +34,9 @@ jobs:
     name: Release build
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Install C++ compiler and libraries
         run:  brew install $(./scripts/list-build-dependencies.sh -m brew -c clang)
       - name: Log environment
