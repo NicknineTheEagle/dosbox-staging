@@ -50,15 +50,19 @@ jobs:
           set -x
           ls -n /Applications/ | grep Xcode*
           xcode-select --print-path
-          sudo xcode-select --switch /Applications/Xcode_11.app/Contents/Developer
-          xcode-select --print-path
+          # sudo xcode-select --switch /Applications/Xcode_11.app/Contents/Developer
+          # xcode-select --print-path
       - name: Build
         env:
           FLAGS: -O3 -DNDEBUG -pipe
         run: |
           set -x
           ./autogen.sh
-          ./configure CFLAGS="$FLAGS" CXXFLAGS="$FLAGS"
+          # FIXME temporarily disable everything aside SDL2 due to linking issues
+          ./configure \
+            --disable-opus-cdda \
+            --disable-screenshots \
+            CFLAGS="$FLAGS" CXXFLAGS="$FLAGS"
           gmake -j "$(sysctl -n hw.physicalcpu)"
           strip src/dosbox
           otool -l src/dosbox
@@ -66,35 +70,28 @@ jobs:
         run: |
           set -x
 
-          # Prepare icon file
-          pushd contrib/icons/
-          mkdir dosbox-staging.iconset
-          cp              dosbox-staging-16.png         dosbox-staging.iconset/icon_16x16.png
-          sips -z 32 32   dosbox-staging-1024.png --out dosbox-staging.iconset/icon_16x16@2x.png
-          sips -z 32 32   dosbox-staging-1024.png --out dosbox-staging.iconset/icon_32x32.png
-          sips -z 64 64   dosbox-staging-1024.png --out dosbox-staging.iconset/icon_32x32@2x.png
-          sips -z 128 128 dosbox-staging-1024.png --out dosbox-staging.iconset/icon_128x128.png
-          sips -z 256 256 dosbox-staging-1024.png --out dosbox-staging.iconset/icon_128x128@2x.png
-          sips -z 256 256 dosbox-staging-1024.png --out dosbox-staging.iconset/icon_256x256.png
-          sips -z 512 512 dosbox-staging-1024.png --out dosbox-staging.iconset/icon_256x256@2x.png
-          sips -z 512 512 dosbox-staging-1024.png --out dosbox-staging.iconset/icon_512x512.png
-          cp              dosbox-staging-1024.png       dosbox-staging.iconset/icon_512x512@2x.png
-          iconutil -c icns dosbox-staging.iconset
-          popd
+          opt=/usr/local/opt
+          dst=dist/dosbox-staging.app/Contents/
 
           # Prepare content
-          install -d dist/dosbox-staging.app/Contents/MacOS/
-          install -d dist/dosbox-staging.app/Contents/Resources/
-          install -d dist/dosbox-staging.app/Contents/SharedSupport/
+          install -d "$dst/MacOS/"
+          install -d "$dst/Resources/"
+          install -d "$dst/SharedSupport/"
+          
+          install        "src/dosbox"                        "$dst/MacOS/"
+          install -m 644 "contrib/macos/Info.plist.template" "$dst/Info.plist"
+          install -m 644 "contrib/macos/PkgInfo"             "$dst/PkgInfo"
+          install -m 644 "contrib/icons/dosbox-staging.icns" "$dst/Resources/"
+          install -m 644 "docs/README.template"              "$dst/SharedSupport/README"
+          install -m 644 "COPYING"                           "$dst/SharedSupport/COPYING"
+          install -m 644 "README"                            "$dst/SharedSupport/manual.txt"
+          install -m 644 "docs/README.video"                 "$dst/SharedSupport/video.txt"
 
-          install        src/dosbox                        dist/dosbox-staging.app/Contents/MacOS/dosbox
-          install -m 644 contrib/macos/Info.plist          dist/dosbox-staging.app/Contents/Info.plist
-          install -m 644 contrib/macos/PkgInfo             dist/dosbox-staging.app/Contents/PkgInfo
-          install -m 644 contrib/icons/dosbox-staging.icns dist/dosbox-staging.app/Contents/Resources/dosbox-staging.icns
-          install -m 644 docs/README.template              dist/dosbox-staging.app/Contents/SharedSupport/README
-          install -m 644 COPYING                           dist/dosbox-staging.app/Contents/SharedSupport/COPYING
-          install -m 644 README                            dist/dosbox-staging.app/Contents/SharedSupport/manual.txt
-          install -m 644 docs/README.video                 dist/dosbox-staging.app/Contents/SharedSupport/video.txt
+          # Fill README template file
+          sed -i -e "s|%VERSION%|${{ env.VERSION }}|"           "$dst/Info.plist"
+          sed -i -e "s|%GIT_COMMIT%|$GITHUB_SHA|"               "$dst/SharedSupport/README"
+          sed -i -e "s|%GIT_BRANCH%|${GITHUB_REF#refs/heads/}|" "$dst/SharedSupport/README"
+          sed -i -e "s|%GITHUB_REPO%|$GITHUB_REPOSITORY|"       "$dst/SharedSupport/README"
 
           ln -s /Applications dist/
 
