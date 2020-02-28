@@ -23,7 +23,7 @@ AC_DEFUN([AM_PATH_SDL], [dnl
                 enable_sdltest=yes)
 
   AC_ARG_ENABLE(sdl-static,
-                AS_HELP_STRING([--enable-sdl2-static],
+                AS_HELP_STRING([--enable-sdl-static],
                                [Link SDL2 statically]),
                 force_sdl_static=yes,)
 
