@@ -53,13 +53,15 @@ jobs:
           ./autogen.sh
           # FIXME temporarily disable everything aside SDL2 due to linking issues
           ./configure \
+            --enable-sdl-static \
             --disable-opus-cdda \
             --disable-screenshots \
             --disable-network \
             CFLAGS="$FLAGS" CXXFLAGS="$FLAGS"
           gmake -j "$(sysctl -n hw.physicalcpu)"
           strip src/dosbox
-          otool -l src/dosbox
+          otool -L src/dosbox
+
       - name: Package
         run: |
           set -x
