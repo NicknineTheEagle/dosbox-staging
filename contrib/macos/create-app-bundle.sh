@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# ./configure --disable-opus-cdda --disable-screenshots --disable-network
+# For redistributable bundle, run ./configure with following args:
+# --enable-sdl-static
+# --disable-opus-cdda
+# --disable-screenshots
+# --disable-network
 
 set -x
 
