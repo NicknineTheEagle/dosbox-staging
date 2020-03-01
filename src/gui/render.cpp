@@ -416,8 +416,6 @@ forcenormal:
 	if (gfx_flags & GFX_UNITY_SCALE &&
 		simpleBlock != NULL &&
 		strstr( simpleBlock->name, "Normal" ) == simpleBlock->name ) {
-	// Ant_222: bad idea to set UNITY_SCALE here, because later, in SetSize(),
-	//          we may have to revert to the simple surface mode, but it will be late.
 		gfx_scalew  = 1.0;
 		gfx_scaleh  = 1.0;
 		xscale      = 1  ;

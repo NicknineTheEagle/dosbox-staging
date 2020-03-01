@@ -30,17 +30,15 @@ typedef enum {
 
 typedef void (*GFX_CallBack_t)( GFX_CallBackFunctions_t function );
 
-/* TODO: consider passing all these flags in deciated structs, */
-/*       we don't win anything by packing them into integers:  */
-#define GFX_CAN_8		0x0001
-#define GFX_CAN_15		0x0002
-#define GFX_CAN_16		0x0004
-#define GFX_CAN_32		0x0008
+#define GFX_CAN_8   0x0001
+#define GFX_CAN_15  0x0002
+#define GFX_CAN_16  0x0004
+#define GFX_CAN_32  0x0008
 
-#define GFX_LOVE_8		0x0010
-#define GFX_LOVE_15		0x0020
-#define GFX_LOVE_16		0x0040
-#define GFX_LOVE_32		0x0080
+#define GFX_LOVE_8  0x0010
+#define GFX_LOVE_15 0x0020
+#define GFX_LOVE_16 0x0040
+#define GFX_LOVE_32 0x0080
 
 #define GFX_RGBONLY 0x0100
 #define GFX_DBL_H   0x0200 /* double-width  flag */
