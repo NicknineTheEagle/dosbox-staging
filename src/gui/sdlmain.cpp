@@ -303,7 +303,7 @@ struct SDL_Block {
 		bool middle_will_release;
 	} mouse;
 	int  ppscale_x, ppscale_y; /* x and y scales for pixel-perfect     */
-	char dbl_h, dbl_w;         /* double-height and double-width flags */
+	bool double_h, double_w;   /* double-height and double-width flags */
 	SDL_Rect updateRects[1024];
 	Bitu num_joysticks;
 #if defined (WIN32)
@@ -871,13 +871,13 @@ Bitu GFX_SetSize(Bitu width,Bitu height,Bitu flags,double scalex,double scaley,G
 	sdl.draw.scalex=scalex;
 	sdl.draw.scaley=scaley;
 
-	sdl.dbl_h = (flags & GFX_DBL_H) > 0;
-	sdl.dbl_w = (flags & GFX_DBL_W) > 0;
+	sdl.double_h = (flags & GFX_DBL_H) > 0;
+	sdl.double_w = (flags & GFX_DBL_W) > 0;
 
 	avw = width; avh = height;
 	GetAvailableArea(&avw, &avh);	
 	LOG_MSG( "Input image: %ix%i DW: %i DH: %i PAR: %5.3g",
-		(int)width, (int)height, sdl.dbl_h, sdl.dbl_w, par );
+		(int)width, (int)height, sdl.double_h, sdl.double_w, par );
 	LOG_MSG( "Available area: %ix%i", avw, avh );
 	if (sdl.kind == OkPerfect) {
 		if (!InitPp( avw, avh ) ) {
