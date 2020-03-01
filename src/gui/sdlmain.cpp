@@ -1792,7 +1792,6 @@ static void GUI_StartUp(Section * sec) {
 
 	std::string output=section->Get_string("output");
 
-
 	if (output == "surface") {
 		sdl.desktop.want_type=SCREEN_SURFACE;
 	} else if (output == "texture") {
